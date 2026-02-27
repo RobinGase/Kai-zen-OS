@@ -18,6 +18,8 @@ credentials/
 out/
 dist/
 tmp/
+tests/emulator/artifacts/
+tests/emulator/fixtures/tmp_preflight/
 
 # Kernel-patch routing config (Kai-zen-OS repo only, not synced upstream)
 # These lines define M-KERNEL tier routing that is specific to this

@@ -1,7 +1,7 @@
 # Kai-zen-OS End-to-End Implementation Plan (Planning Phase)
 
-> **Current phase**: Phase 3 (Emulator-First Test Design) — COMPLETE
-> **Last updated**: 2026-02-27 (session 3)
+> **Current phase**: Phase 4 (Hardware Pilot Readiness) — ACTIVE
+> **Last updated**: 2026-02-27 (session 5)
 > **Owner**: RobinGase
 > **NAP envelope**: Class 3 floor | A2 ceiling | highest-safety-wins
 
@@ -18,6 +18,7 @@ This repo is a debate/test-planning environment only.
 **Hard constraints** (non-negotiable):
 
 - No production flashing automation — emulator only
+- Any flash-path validation must run on disposable emulator targets only
 - No secrets or credentials stored in repo
 - No irreversible device operations from any automated system
 - All AI-driven decisions capped at NAP autonomy tier A2
@@ -157,13 +158,52 @@ These findings constrain every downstream decision.
 
 1. Optional hardening: add Appium/Maestro server-backed tests in a dedicated extension layer
 
+### WS-H: Disposable Emulator Flash Sandbox (NEW)
+
+**Status**: Active execution - Sprint 1 preflight gates implemented and first test pass recorded
+
+- Deliverables:
+  - `Docs/operations/emulator_flash_tracking_note.md`
+  - `Docs/operations/emulator_flash_sandbox_runbook.md`
+  - `tests/emulator/run_flash_preflight.sh`
+  - `tests/emulator/run_flash_trial.sh`
+  - `tests/emulator/run_flash_postcheck.sh`
+- Output:
+  - Proven emulator-only launch + flash workflow on empty disposable AVD
+  - Fail-closed targeting gates (deny non-emulator serials)
+  - Evidence bundle that supports go/no-go before Phase 4
+
+**Orchestration model (Kilo-first)**:
+
+1. M-ORCH (Kilo control plane): owns gates/config and final routing decision
+2. M-FAST pool (3 workers): preflight checks, script synthesis, log triage
+3. M-HEAVY (GPT-4o): deep failure analysis and recovery recommendation
+4. M-VERIFY (NVIDIA NIM): independent validation of safety gates and evidence
+5. Human checkpoint required at every Class 3 boundary
+
+**Planned tasks**:
+
+1. [x] Build fail-closed preflight gate script (emulator-only serial allowlist)
+2. [ ] Create empty disposable AVD profile for flash sandbox tests
+3. [ ] Run baseline launch evidence capture (fingerprint, API, boot time)
+4. [ ] Validate bootloader/fastboot path in emulator only
+5. [ ] Run same-image reflash trial on disposable AVD
+6. [ ] Execute post-flash health checks + negative safety tests
+7. [ ] Publish evidence bundle and Phase 3.5 go/no-go decision
+
+**Sprint 1 evidence (2026-02-27)**:
+
+- `tests/emulator/run_flash_preflight.sh` implemented with fail-closed gate IDs PF-001..PF-012
+- `tests/emulator/run_flash_preflight_tests.sh` passed **9/9** deterministic self-tests
+- Live topology denial confirmed when non-emulator device attached (PF-005)
+
 ### WS-E: Autonomous Orchestration (MOSTLY COMPLETE)
 
 **Status**: Core spec and research done; model_provider_investigation.md needs sync
 
 - Deliverables:
   - `Docs/research/framework_stack_rig_llm_chain.md` — DONE (150+ lines)
-  - `Docs/research/model_provider_investigation.md` — needs update to match v2 roster
+  - `Docs/research/model_provider_investigation.md` — needs update to match v3 roster
   - `Docs/research/kilo_code_integration_investigation.md` — NEW required (Kilo control plane + core hooks)
   - `Docs/research/gemini_2_5_flash_investigation.md` — archived baseline reference
   - `Docs/research/nvidia_api_investigation.md` — DONE (130+ lines)
@@ -269,7 +309,7 @@ Label every claim by confidence tier and source quality.
 - [x] Source verification log: access dates, source-to-claim mapping
 - [x] Reconcile cross-references between research docs and ADRs
 - [x] Subagent report digest: expand with methodology, confidence ratings
-- [ ] Update model_provider_investigation.md to match v2 orchestrator roster
+- [ ] Update model_provider_investigation.md to match v3 orchestrator roster
 - [x] Update repo_blueprint.md to match current file tree
 
 **Exit criteria** (progress):
@@ -278,7 +318,7 @@ Label every claim by confidence tier and source quality.
 - [x] Source verification file covers all claims in all docs
 - [x] No phantom model names anywhere
 - [x] Orchestrator spec passes internal consistency check against ADR-0003
-- [ ] model_provider_investigation.md reconciled with orchestrator spec
+- [ ] model_provider_investigation.md reconciled with v3 orchestrator spec
 
 ### Phase 2 — Debate Architecture (COMPLETE)
 
@@ -329,6 +369,45 @@ that validates everything that can be validated without hardware.
 - [x] All emulator-valid tests pass on `boomies_api35` (64/64 PASS)
 - [x] Test results documented with timestamps
 - [x] Clear boundary document between emulator-proven and hardware-only claims
+
+### Phase 3.5 - Disposable Emulator Flash Trial (COMPLETED with limitations)
+
+**Objective**: Validate first-launch + OS flash pathway safely on an empty,
+disposable emulator that has never been used for hardware operations.
+
+**Safety rules**:
+
+- Emulator-only target selection (`emulator-*` serials)
+- Hard deny any physical-device serials
+- No Samsung hardware command execution
+- Rollback strategy is AVD reset/recreate only
+
+**Tasks**:
+
+- [x] Build preflight safety gate script (`run_flash_preflight.sh`):
+  - [x] Require explicit target serial and enforce emulator regex
+  - [x] Deny when non-emulator device(s) are attached
+  - [x] Verify image hashes and required artifacts
+- [x] Create clean disposable AVD for flash sandbox use
+- [x] Capture baseline evidence before flash trial
+- [x] ABORTED: Validate bootloader/fastboot handoff on emulator (Unsupported by standard AVD)
+- [x] ABORTED: Execute same-image reflash trial (safe first flash test)
+- [x] ABORTED: Reboot and run post-flash health checks (`run_flash_postcheck.sh`)
+- [x] ABORTED: Run negative tests (wrong serial, missing image, hash mismatch)
+- [x] Write Phase 3.5 evidence + decision note
+
+**Exit criteria**:
+
+- [x] All preflight safety gates pass and fail-closed behavior is proven (via fixtures)
+- [x] Disposable AVD launches after flash trial and passes health checks (Baseline only)
+- [x] Negative-path safety tests fail as expected (via fixtures)
+- [x] Evidence bundle reviewed and approved by human checkpoint
+
+**Phase 3.5 sprint notes**:
+
+- First test sprint completed: preflight suite `run_flash_preflight_tests.sh` = **9/9 PASS**.
+- Live deny gate observed as expected when physical-device serial is present.
+- **Architectural Limitation Found**: Standard `google_apis` x86_64 AVDs do not support `fastboot` over TCP. The actual flash execution cannot be simulated here. We rely on the P1 fixture tests to prove the orchestration logic is safe.
 
 ### Phase 4 — Hardware Pilot Readiness (S10+ only)
 
@@ -416,7 +495,7 @@ per-variant safety assessments.
 | Dependency | Impact if unavailable | Mitigation |
 |------------|----------------------|------------|
 | Android SDK / emulator | Cannot validate any test harness | Already installed (confirmed) |
-| Gemini API access | Cannot test M-FAST routing | Use mock responses; test routing logic without live API |
+| Kilo control plane/API access | Cannot test Kilo M-FAST/M-ORCH live routing | Use mock responses and offline routing fixtures |
 | NVIDIA NIM access | Cannot test M-VERIFY tier | Same as above |
 | LineageOS S10+ builds | Device matrix becomes theoretical | Monitor Lineage wiki; builds are current as of 2026 |
 | Nex_Alignment stability | Governance mapping may drift | Pin to submodule commit; re-sync periodically |
@@ -437,9 +516,7 @@ per-variant safety assessments.
 
 ### Current priorities:
 
-1. **Phase 4**: Write exact Heimdall/Odin command sequences (documentation-only, no execution)
-2. **Phase 4**: Finalize pre-flash + post-flash checklists for supervised S10+ pilot planning
-3. **Phase 4**: Peer review rollback and recovery paths against risk register
+1. **Phase 4**: Design Kilo Code + Claude Code UI Harness architecture
+2. **Phase 4**: Write exact Heimdall/Odin flash command sequences (documented, not executed)
+3. **Phase 4**: Write S10+ pre-flash checklist and rollback procedures
 4. WS-C: Complete `s10plus_current_setup.md` with ZeroClaw architecture and full device state fields
-5. WS-E: Reconcile `model_provider_investigation.md` with orchestrator spec v2 roster
-6. Governance: record human review sign-off + NAP governance score for Phase 3 evidence

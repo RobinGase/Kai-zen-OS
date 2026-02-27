@@ -40,6 +40,7 @@ Kai-zen-OS/
       s10plus_rollback_plan.md       # Rollback/recovery procedures (doc only)
       remote_control_setup.md        # ADB/scrcpy/Appium control model
       emulator_first_validation.md   # AVD test taxonomy (64 tests, 5 layers)
+      emulator_flash_tracking_note.md # Phase 3.5 disposable flash-sandbox tracker
     governance/
       risk_register.md               # 15 risks with full detail and status
       source_verification.md         # Dated source log with confidence tiers

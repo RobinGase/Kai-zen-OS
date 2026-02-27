@@ -5,7 +5,7 @@ This is a planning/debate workspace for Kai-zen-OS.
 No production flashing code is included in this phase.
 
 > Current routing baseline: Kilo-first (M-FAST worker pool + Kilo control plane)
-> Emulator validation baseline: 5 layers, fail-closed harness hardening in progress
+> Emulator validation baseline: 5 layers complete + Phase 3.5 preflight sprint 1 (9/9) passed
 
 ## Core
 
@@ -38,6 +38,7 @@ No production flashing code is included in this phase.
 - `Docs/operations/s10plus_rollback_plan.md` - rollback/recovery procedures (documentation only)
 - `Docs/operations/remote_control_setup.md`
 - `Docs/operations/emulator_first_validation.md`
+- `Docs/operations/emulator_flash_tracking_note.md`
 
 ## Governance
 

@@ -3,7 +3,7 @@
 Planning-first repository for an autonomous, emulator-first Android image
 engineering program targeting Samsung Galaxy phones (S10+ baseline).
 
-> Current phase: Phase 3 complete, Phase 4 preparation active
+> Current phase: Phase 3.5 active (Sprint 1 preflight gates passed)
 > Governance envelope: NAP Class 3 floor | A2 ceiling | highest-safety-wins
 > Runtime direction: Kilo-first orchestration (3x M-FAST worker fan-out)
 
@@ -17,10 +17,11 @@ This repository remains documentation and test-harness focused:
 ## Start Here
 
 - `Docs/implementation_plan.md` — master plan, phases, workstreams
-- `Docs/architecture/orchestrator_model_spec.md` — routing model, escalation, gates
-- `Docs/adrs/ADR-0003-model-routing-policy.md` — policy authority for model allowlist
-- `Docs/operations/emulator_first_validation.md` — 5-layer emulator validation plan/results
-- `REDOX_MICROKERNEL_STATUS_NOTE.md` — redox status handoff note for agents
+- `Docs/architecture/orchestrator_model_spec.md` - routing model, escalation, gates
+- `Docs/adrs/ADR-0003-model-routing-policy.md` - policy authority for model allowlist
+- `Docs/operations/emulator_first_validation.md` - 5-layer emulator validation plan/results
+- `Docs/operations/emulator_flash_tracking_note.md` - live Phase 3.5 flash-sandbox tracking
+- `REDOX_MICROKERNEL_STATUS_NOTE.md` - redox status handoff note for agents
 
 ## Current AI Routing Snapshot
 
@@ -34,6 +35,8 @@ This repository remains documentation and test-harness focused:
 
 - Main runner: `tests/emulator/run_all.sh`
 - Last-phase runner: `tests/emulator/run_layer5.sh`
+- Phase 3.5 preflight: `tests/emulator/run_flash_preflight.sh`
+- Phase 3.5 self-tests: `tests/emulator/run_flash_preflight_tests.sh`
 - Layer 4 and 5 include hardened fail-closed checks for failure-path assertions.
 
 ## Reference

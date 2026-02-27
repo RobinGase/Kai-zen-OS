@@ -1,0 +1,2 @@
+List of devices attached
+R58M689Q8JY device product:lineage_beyond2lte model:SM_G975F device:beyond2lte transport_id:2
