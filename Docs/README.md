@@ -9,6 +9,7 @@ No production flashing code is included in this phase.
 - `Docs/implementation_plan.md` - end-to-end master plan
 - `Docs/architecture/repo_blueprint.md` - repo-style structure and ownership
 - `Docs/architecture/orchestrator_model_spec.md` - model routing: which AI handles which task tier
+- `Docs/architecture/architecture_candidates.md` - Phase 2 architecture evaluation (A/B/C)
 
 ## Alignment
 
@@ -44,3 +45,4 @@ No production flashing code is included in this phase.
 - `Docs/adrs/ADR-0001-safety-boundary.md`
 - `Docs/adrs/ADR-0002-kernel-and-os-strategy.md`
 - `Docs/adrs/ADR-0003-model-routing-policy.md`
+- `Docs/adrs/ADR-0004-architecture-selection.md`

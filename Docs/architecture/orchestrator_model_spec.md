@@ -2,7 +2,12 @@
 
 ## Status
 
-Accepted (planning baseline) — supplements ADR-0003
+Accepted (planning baseline) — supplements ADR-0003 and ADR-0004
+
+> **Runtime architecture**: Monolithic Orchestrator (Architecture A) for
+> Phases 0-3. Migration to Rig-based Multi-Agent Pipeline (Architecture B)
+> planned for Phase 4+. See `Docs/architecture/architecture_candidates.md`
+> and `Docs/adrs/ADR-0004-architecture-selection.md`.
 
 ## Purpose
 

@@ -1,6 +1,6 @@
 # Kai-zen-OS End-to-End Implementation Plan (Planning Phase)
 
-> **Current phase**: Phase 1 (Research Consolidation) — ACTIVE | Phase 2 starting
+> **Current phase**: Phase 3 (Emulator-First Test Design) — ACTIVE
 > **Last updated**: 2026-02-27 (session 2)
 > **Owner**: RobinGase
 > **NAP envelope**: Class 3 floor | A2 ceiling | highest-safety-wins
@@ -276,25 +276,32 @@ Label every claim by confidence tier and source quality.
 - [x] Orchestrator spec passes internal consistency check against ADR-0003
 - [ ] model_provider_investigation.md reconciled with orchestrator spec
 
-### Phase 2 — Debate Architecture
+### Phase 2 — Debate Architecture (COMPLETE)
 
 **Objective**: Define and evaluate candidate autonomous pipeline architectures.
 
 **Tasks**:
 
-- [ ] Define Architecture A: monolithic orchestrator (single Claude session manages everything)
-- [ ] Define Architecture B: multi-agent with Rig (planner → worker → verifier pipeline)
-- [ ] Define Architecture C: event-driven with message queue (tasks posted, agents consume)
-- [ ] Red-team each candidate: failure modes, single points of failure, cost profile
-- [ ] Score candidates against criteria: reliability, cost, NAP compliance, debuggability
-- [ ] Write ADR-0004: architecture selection with explicit tradeoffs
-- [ ] Update orchestrator spec to match selected architecture
+- [x] Define Architecture A: monolithic orchestrator (single Claude session)
+- [x] Define Architecture B: multi-agent with Rig (planner → worker → verifier)
+- [x] Define Architecture C: event-driven with message queue
+- [x] Red-team each candidate: failure modes, cost profile, NAP compliance
+- [x] Score candidates: A=7.25, B=6.85, C=4.35
+- [x] Write ADR-0004: architecture selection (A now, B later, C never)
+- [x] Update orchestrator spec to reference architecture decision
 
-**Exit criteria**:
+**Result**: Architecture A (Monolithic) selected for Phases 0-3.
+Architecture B (Rig Pipeline) planned for Phase 4+ evolution.
+Architecture C rejected permanently.
 
-- ADR-0004 written with all standard fields
-- One architecture selected with quantified tradeoffs
-- Losing candidates documented with reasons for rejection
+See `Docs/architecture/architecture_candidates.md` and
+`Docs/adrs/ADR-0004-architecture-selection.md`.
+
+**Exit criteria**: ALL MET
+
+- [x] ADR-0004 written with all standard fields
+- [x] One architecture selected (A) with quantified tradeoffs
+- [x] Losing candidates documented with reasons
 
 ### Phase 3 — Emulator-First Test Design
 
