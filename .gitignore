@@ -1,0 +1,20 @@
+# OS/editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python/Node noise (future-proof)
+__pycache__/
+.pytest_cache/
+node_modules/
+
+# Local env and secrets
+.env
+.env.*
+secrets/
+credentials/
+
+# Build/output artifacts (reserved for future implementation phase)
+out/
+dist/
+tmp/
