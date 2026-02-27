@@ -3,12 +3,19 @@
 # Usage: bash tests/emulator/run_all.sh
 # Prerequisites: emulator booted at emulator-5554, ADB accessible
 
-set -uo pipefail
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 TOTAL_PASS=0
 TOTAL_FAIL=0
 LAYER_RESULTS=()
+
+for script in run_layer1.sh run_layer2.sh run_layer3.sh run_layer4.sh run_layer5.sh; do
+    if [ ! -f "$SCRIPT_DIR/$script" ]; then
+        echo "FATAL: Missing layer script: $SCRIPT_DIR/$script"
+        exit 1
+    fi
+done
 
 run_layer() {
     local layer="$1"

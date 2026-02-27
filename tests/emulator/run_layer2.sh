@@ -93,8 +93,8 @@ run_test "T-014b" "No phantom models in active roster section" \
 run_test "T-014c" "All roster models are real (GPT-4o present)" \
     "grep -q 'GPT-4o' $SPEC"
 
-run_test "T-014d" "All roster models are real (Gemini 2.5 Flash present)" \
-    "grep -q 'Gemini 2.5 Flash' $SPEC"
+run_test "T-014d" "All roster models are real (Kilo runtime present)" \
+    "grep -q 'Kilo Code Runtime' $SPEC"
 
 run_test "T-014e" "All roster models are real (Llama 3.1 present)" \
     "grep -q 'Llama 3.1' $SPEC"

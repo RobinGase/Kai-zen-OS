@@ -34,28 +34,28 @@ correlated failure risk on safety-critical decisions.
 
 Adopt **tiered model routing** with independent-vendor verification:
 
-- **Tier A** (cheap/fast): Gemini 2.5 Flash — default for ≥80% of tasks
-- **Tier B** (balanced): GPT-4o or Gemini 2.5 Pro — escalate when
+- **Tier A** (cheap/fast): Kilo Code Runtime (M-FAST pool) — default for ≥80% of tasks
+- **Tier B** (balanced): GPT-4o or Kilo Code UI Worker — escalate when
   confidence or quality is insufficient
 - **Tier C** (high assurance): dual-vendor consensus (GPT-4o + NVIDIA NIM)
   for critical decisions, arbitrated by orchestrator
-- **Tier K** (kernel-critical): Opus 4.6 or GPT-4o with mandatory human
+- **Tier K** (kernel-critical): Kilo Code Core Agent or GPT-4o with mandatory human
   approval and independent verification — Kai-zen-OS repo only
 
 All routing goes through a provider-agnostic adapter layer. The
-orchestrator (Claude Opus 4) controls routing; no model self-selects
+orchestrator (Kilo control plane) controls routing; no model self-selects
 its tier.
 
 **Model allowlist** (only these models may be invoked):
 
 | Slot | Model | Vendor |
 |------|-------|--------|
-| M-FAST | Gemini 2.5 Flash | Google |
+| M-FAST | Kilo Code Runtime (kilo-fast pool) | Kilo |
 | M-HEAVY | GPT-4o | OpenAI |
-| M-FRONT | Gemini 2.5 Pro | Google |
-| M-ORCH | Claude Opus 4 (claude-opus-4-6) | Anthropic |
+| M-FRONT | Kilo Code UI Worker (kilo-ui) | Kilo |
+| M-ORCH | Kilo Control Plane (kilo-orchestrator) | Kilo |
 | M-VERIFY | Llama 3.1 70B / Nemotron (NIM) | NVIDIA |
-| M-KERNEL | Claude Opus 4 OR GPT-4o | Anthropic / OpenAI |
+| M-KERNEL | Kilo Code Core Agent OR GPT-4o | Kilo / OpenAI |
 
 No model outside this allowlist may be invoked without updating this
 ADR and the orchestrator spec.
@@ -93,8 +93,7 @@ ADR and the orchestrator spec.
 
 ### Negative
 - Requires routing logic and metadata tagging for every task.
-- Requires API access to multiple vendors (Google, OpenAI, NVIDIA,
-  Anthropic).
+- Requires API access to multiple vendors (Kilo, OpenAI, NVIDIA).
 - Model pricing and availability may change, requiring roster updates.
 - Confidence-based escalation depends on self-reported model confidence,
   which is an imperfect signal.

@@ -4,6 +4,9 @@ This is a planning/debate workspace for Kai-zen-OS.
 
 No production flashing code is included in this phase.
 
+> Current routing baseline: Kilo-first (M-FAST worker pool + Kilo control plane)
+> Emulator validation baseline: 5 layers, fail-closed harness hardening in progress
+
 ## Core
 
 - `Docs/implementation_plan.md` - end-to-end master plan
@@ -24,7 +27,8 @@ No production flashing code is included in this phase.
 - `Docs/research/samsung_device_support_matrix.md`
 - `Docs/research/framework_stack_rig_llm_chain.md`
 - `Docs/research/model_provider_investigation.md`
-- `Docs/research/gemini_2_5_flash_investigation.md`
+- `Docs/research/kilo_code_integration_investigation.md`
+- `Docs/research/gemini_2_5_flash_investigation.md` (archived baseline)
 - `Docs/research/nvidia_api_investigation.md`
 - `Docs/research/subagent_report_digest.md`
 

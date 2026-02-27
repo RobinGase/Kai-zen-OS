@@ -1,40 +1,41 @@
 # Kai-zen-OS
 
-Planning-first repository for an autonomous, emulator-first image
+Planning-first repository for an autonomous, emulator-first Android image
 engineering program targeting Samsung Galaxy phones (S10+ baseline).
 
-> **Current phase**: Phase 1 (Research Consolidation) → Phase 2 starting
-> **NAP envelope**: Class 3 floor | A2 ceiling | highest-safety-wins
+> Current phase: Phase 3 complete, Phase 4 preparation active
+> Governance envelope: NAP Class 3 floor | A2 ceiling | highest-safety-wins
+> Runtime direction: Kilo-first orchestration (3x M-FAST worker fan-out)
 
-This repo is intentionally **documentation-only**:
+This repository remains documentation and test-harness focused:
 
-- No flashing automation or production code
-- No secrets or credentials
-- No irreversible device operations
-- Emulator testing only (`boomies_api35` AVD, Android 15)
-- All AI decisions capped at NAP autonomy tier A2
-
-## Scope
-
-- Design end-to-end Samsung image pipeline (baseline: SM-G975F Exynos)
-- Variant-level device matrix S10 → S24+ with Exynos/Snapdragon split
-- Multi-model orchestration: Gemini 2.5 Flash (fast) → GPT-4o (heavy) →
-  NVIDIA NIM (verify) → Claude Opus 4 (orchestrate) → M-KERNEL (kernel patches)
-- NAP governance via Nex_Alignment protocol
-- Redox microkernel as R&D / architecture-inspiration stream only
+- No production flashing automation
+- Emulator-first validation before any hardware readiness claims
+- Redox microkernel track is R&D-only (not deployment kernel path)
+- Kernel-critical recommendations require dual verification + human approval
 
 ## Start Here
 
-- **Main plan**: `Docs/implementation_plan.md` (phase tracking, workstreams, exit criteria)
-- **Docs index**: `Docs/README.md`
-- **Orchestrator spec**: `Docs/architecture/orchestrator_model_spec.md` (model routing)
-- **NAP alignment**: `Docs/alignment/kai_zen_nap_alignment.md`
-- **NAP glossary**: `Docs/alignment/nap_glossary.md` (Class/Tier/Bundle definitions)
-- **Device matrix**: `Docs/research/samsung_device_support_matrix.md`
-- **S10+ baseline**: `Docs/operations/s10plus_current_setup.md`
-- **Emulator tests**: `Docs/operations/emulator_first_validation.md`
+- `Docs/implementation_plan.md` — master plan, phases, workstreams
+- `Docs/architecture/orchestrator_model_spec.md` — routing model, escalation, gates
+- `Docs/adrs/ADR-0003-model-routing-policy.md` — policy authority for model allowlist
+- `Docs/operations/emulator_first_validation.md` — 5-layer emulator validation plan/results
+- `REDOX_MICROKERNEL_STATUS_NOTE.md` — redox status handoff note for agents
 
-## Integrated Reference
+## Current AI Routing Snapshot
 
-- Nex_Alignment (git submodule): `references/Nex_Alignment`
-- Upstream: https://github.com/RobinGase/Nex_Alignment
+- `M-ORCH`: Kilo control plane (gate/config owner)
+- `M-FAST`: Kilo runtime worker pool (3 parallel workers)
+- `M-HEAVY`: GPT-4o escalation lane
+- `M-VERIFY`: NVIDIA NIM independent verification lane
+- `M-KERNEL`: Kilo core agent or GPT-4o fallback (human approval mandatory)
+
+## Tests
+
+- Main runner: `tests/emulator/run_all.sh`
+- Last-phase runner: `tests/emulator/run_layer5.sh`
+- Layer 4 and 5 include hardened fail-closed checks for failure-path assertions.
+
+## Reference
+
+- Nex_Alignment submodule: `references/Nex_Alignment`

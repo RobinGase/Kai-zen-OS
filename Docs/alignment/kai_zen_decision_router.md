@@ -105,3 +105,4 @@ safeguards.
 | 2026-02-27 | Model routing: tiered multi-vendor with allowlist | 3 | RobinGase | ADR-0003, orchestrator_model_spec.md |
 | 2026-02-27 | Add M-KERNEL tier for kernel-critical patches | 3 | RobinGase | orchestrator_model_spec.md, ADR-0003, .gitignore |
 | 2026-02-27 | Fix phantom models (Codex 5.3 → GPT-4o, Gemini 3.1 Pro → Gemini 2.5 Pro) | 2 | RobinGase | orchestrator_model_spec.md, ADR-0003 |
+| 2026-02-27 | Replace Gemini slots with Kilo runtime + Kilo gate control plane | 3 | RobinGase | orchestrator_model_spec.md, ADR-0003, run_layer2.sh |

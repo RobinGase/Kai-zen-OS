@@ -124,7 +124,7 @@ Validate system handles failures gracefully.
 |---------|-------------|--------|-----------------|
 | T-030 | Network drop during API call | Disable emulator network | Retry or fail-closed |
 | T-031 | Auth token expiry | Mock expired OAuth token | Re-auth or graceful error |
-| T-032 | Model endpoint down | Mock 503 from Gemini API | Fail-closed, no auto-approval |
+| T-032 | Model endpoint down | Mock 503 from Kilo gateway/API | Fail-closed, no auto-approval |
 | T-033 | Invalid model response | Mock malformed JSON | Schema validation rejects, retry |
 
 ### Layer 5: Evidence / Audit Tests

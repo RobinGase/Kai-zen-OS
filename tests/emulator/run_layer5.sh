@@ -3,7 +3,7 @@
 # Validates that logging, tracing, and audit trail mechanisms work
 # Tests: structured log output, file evidence, git state integrity
 
-set -uo pipefail
+set -euo pipefail
 
 if [ -d "/c/Users/Robin/scoop/apps/android-clt/current" ]; then
     SDK="/c/Users/Robin/scoop/apps/android-clt/current"
@@ -21,16 +21,45 @@ TOTAL=0
 PROJ_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 
 run_test() {
-    local id="$1"; local desc="$2"; local cmd="$3"; local expected="$4"
+    local id="$1"; local desc="$2"; local cmd="$3"; local expected="$4"; local exit_mode="${5:-zero}"
+    local result exit_code pattern_ok=0 exit_ok=0
+
     TOTAL=$((TOTAL + 1))
-    result=$(eval "$cmd" 2>&1 || echo "COMMAND_FAILED")
-    if echo "$result" | grep -qi "$expected"; then
+
+    set +e
+    result=$(eval "$cmd" 2>&1)
+    exit_code=$?
+    set -e
+
+    if echo "$result" | grep -qiE "$expected"; then
+        pattern_ok=1
+    fi
+
+    case "$exit_mode" in
+        zero)
+            if [ "$exit_code" -eq 0 ]; then exit_ok=1; fi
+            ;;
+        nonzero)
+            if [ "$exit_code" -ne 0 ]; then exit_ok=1; fi
+            ;;
+        any)
+            exit_ok=1
+            ;;
+        *)
+            echo "FATAL: Unknown exit mode: $exit_mode"
+            exit 1
+            ;;
+    esac
+
+    if [ "$pattern_ok" -eq 1 ] && [ "$exit_ok" -eq 1 ]; then
         echo "  PASS  $id: $desc"
         PASS=$((PASS + 1))
     else
         echo "  FAIL  $id: $desc"
-        echo "        Expected: $expected"
-        echo "        Got:      $(echo "$result" | head -3)"
+        echo "        Expected pattern: $expected"
+        echo "        Expected exit:    $exit_mode"
+        echo "        Actual exit:      $exit_code"
+        echo "        Got:              $(echo "$result" | head -3)"
         FAIL=$((FAIL + 1))
     fi
 }
@@ -93,11 +122,11 @@ echo ""
 echo "--- T-043: Repo integrity ---"
 
 run_test "T-043a" "Git repo is clean (no uncommitted changes to docs)" \
-    "cd '$PROJ_ROOT' && git diff --quiet -- Docs/ && echo repo_clean || echo repo_dirty" \
-    "repo_clean\|repo_dirty"
+    "cd '$PROJ_ROOT' && git rev-parse --is-inside-work-tree >/dev/null && git diff --quiet -- Docs/ && echo repo_clean" \
+    "repo_clean"
 
 run_test "T-043b" "No secrets in git history (API key pattern)" \
-    "cd '$PROJ_ROOT' && ! git log --all --oneline --diff-filter=A -- '*.md' | head -20 | grep -qi 'sk-[a-zA-Z0-9]' && echo no_secrets" \
+    "cd '$PROJ_ROOT' && git rev-parse --is-inside-work-tree >/dev/null && ! git grep -nEi 'sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{20,}|AIza[A-Za-z0-9_-]{20,}' -- . ':!*.png' ':!*.jpg' ':!*.jpeg' ':!*.gif' ':!*.zip' ':!*.pdf' >/dev/null && echo no_secrets" \
     "no_secrets"
 
 run_test "T-043c" "All ADRs have date field" \

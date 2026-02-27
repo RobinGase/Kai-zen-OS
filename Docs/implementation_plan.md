@@ -164,24 +164,25 @@ These findings constrain every downstream decision.
 - Deliverables:
   - `Docs/research/framework_stack_rig_llm_chain.md` — DONE (150+ lines)
   - `Docs/research/model_provider_investigation.md` — needs update to match v2 roster
-  - `Docs/research/gemini_2_5_flash_investigation.md` — DONE (120+ lines)
+  - `Docs/research/kilo_code_integration_investigation.md` — NEW required (Kilo control plane + core hooks)
+  - `Docs/research/gemini_2_5_flash_investigation.md` — archived baseline reference
   - `Docs/research/nvidia_api_investigation.md` — DONE (130+ lines)
   - `Docs/adrs/ADR-0003-model-routing-policy.md` — DONE (full standard format)
-  - `Docs/architecture/orchestrator_model_spec.md` — DONE (v2 with M-KERNEL)
+  - `Docs/architecture/orchestrator_model_spec.md` — updated (v3 Kilo routing + gate control)
 - Output: routing policy, verification pipeline, concrete model assignments
 
 **Completed**:
 
 1. [x] Fix phantom model names (Codex 5.3 → GPT-4o, Gemini 3.1 Pro → Gemini 2.5 Pro)
 2. [x] Add M-KERNEL tier for core kernel patches (Opus 4.6 / GPT-4o, xtra-high)
-3. [x] Flesh out Gemini 2.5 Flash with pricing, benchmarks, 1M context
+3. [x] Switch primary fast/orchestrator lanes from Gemini slots to Kilo runtime/control plane
 4. [x] Flesh out NVIDIA with Llama 3.1 70B, Nemotron, Mixtral, API details
 5. [x] Add framework comparison criteria and evaluation methodology
 6. [x] Reconcile ADR-0003 with orchestrator spec (model allowlist matches)
 
 **Remaining work**:
 
-1. Update `model_provider_investigation.md` to match v2 orchestrator roster
+1. Update `model_provider_investigation.md` to match v3 orchestrator roster (Kilo-based)
 2. Add model version pinning strategy to orchestrator spec
 3. Add endpoint failure/fallback behavior to orchestrator spec
 
@@ -259,7 +260,8 @@ Label every claim by confidence tier and source quality.
 **Tasks**:
 
 - [x] Samsung device matrix: expand to variant-level with SoC/carrier split
-- [x] Gemini 2.5 Flash: pricing, benchmarks, context window (1M), rate limits
+- [x] Gemini 2.5 Flash: pricing, benchmarks, context window (1M), rate limits (archived baseline)
+- [ ] Kilo Code integration: core hooks, gate ownership, config plane behavior
 - [x] NVIDIA NIM: specific models (Llama 3.1 70B, Mixtral, Nemotron), pricing, auth
 - [x] Framework stack: evaluation criteria, maturity assessment, Rust commitment
 - [x] Fix orchestrator model roster: phantom names replaced with real models

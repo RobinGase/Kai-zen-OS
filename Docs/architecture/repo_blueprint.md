@@ -31,7 +31,8 @@ Kai-zen-OS/
       samsung_device_support_matrix.md    # S10-S24 variant-level matrix
       framework_stack_rig_llm_chain.md    # Rig vs llm-chain evaluation
       model_provider_investigation.md     # Multi-vendor provider roster and routing
-      gemini_2_5_flash_investigation.md   # Gemini 2.5 Flash deep assessment
+      kilo_code_integration_investigation.md # Kilo control-plane + core hook assessment
+      gemini_2_5_flash_investigation.md   # Gemini deep assessment (archived baseline)
       nvidia_api_investigation.md         # NVIDIA NIM deep assessment
       subagent_report_digest.md           # Research methodology and consolidated outcomes
     operations/

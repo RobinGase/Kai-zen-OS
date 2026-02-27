@@ -25,12 +25,12 @@ work without prior conversation context.
 
 | Slot | Model | Vendor | Primary Role | Status |
 |------|-------|--------|--------------|--------|
-| **M-FAST** | Gemini 2.5 Flash | Google | High-volume, low-cost work: tests, mocks, readings, assessments, logging, heartbeat checks, syntax audits, primitive path audits, wiring | Verified — GA, $0.15/1M input tokens, 1M context window |
+| **M-FAST** | Kilo Code Runtime (kilo-fast pool) | Kilo | High-volume worker pool: tests, mocks, readings, assessments, logging, heartbeat checks, syntax audits, path audits, wiring | Planned integration — core AI hooks + 3-worker fan-out |
 | **M-HEAVY** | GPT-4o | OpenAI | High-complexity tasks: multi-file refactors, deep architecture reasoning, novel algorithm design, security-critical code generation | Verified — GA, $2.50/1M input tokens, 128K context |
-| **M-FRONT** | Gemini 2.5 Pro | Google | Front-end work: UI components, styling, layout, accessibility, client-side interaction logic | Verified — GA, $1.25/1M input, 1M context window |
-| **M-ORCH** | Claude Opus 4 (claude-opus-4-6) | Anthropic | **Orchestrator**: report consolidation, authenticity verification, governance routing, final decision authority | Active — current session model |
+| **M-FRONT** | Kilo Code UI Worker (kilo-ui) | Kilo | Front-end work: UI components, styling, layout, accessibility, client-side interaction logic | Planned integration — shared Kilo config plane |
+| **M-ORCH** | Kilo Control Plane (kilo-orchestrator) | Kilo | **Orchestrator + gates**: report consolidation, authenticity verification, governance routing, final decision authority, gate enforcement | Planned integration — gate owner for runtime policy |
 | **M-VERIFY** | NVIDIA NIM (Llama 3.1 70B / Nemotron) | NVIDIA | Independent investigation and cross-vendor verification for high-assurance decisions | Verified — NIM API, OpenAI-compatible endpoint |
-| **M-KERNEL** | Claude Opus 4 (claude-opus-4-6) OR GPT-4o | Anthropic / OpenAI | **Core kernel patches only**: device tree modifications, bootloader chain reasoning, partition table changes, SELinux policy, HAL integration | Restricted — Kai-zen-OS repo only, xtra-high priority |
+| **M-KERNEL** | Kilo Code Core Agent OR GPT-4o | Kilo / OpenAI | **Core kernel patches only**: device tree modifications, bootloader chain reasoning, partition table changes, SELinux policy, HAL integration | Restricted — Kai-zen-OS repo only, xtra-high priority |
 
 > **M-KERNEL note**: This slot exists exclusively for this repository's
 > kernel-critical work. It is not part of the general NAP orchestrator
@@ -46,9 +46,9 @@ work without prior conversation context.
   the task matches a complexity trigger (see Section 3).
 - **M-FRONT** handles any task tagged `frontend`, `ui`, `css`, `a11y`, or
   `client-side`.
-- **M-ORCH** never executes leaf tasks. It consolidates outputs from all
-  other slots, performs authenticity checks, and applies NAP governance
-  decisions.
+- **M-ORCH** (Kilo control plane) never executes leaf tasks. It consolidates
+  outputs from all other slots, performs authenticity checks, enforces all
+  gates/config, and applies NAP governance decisions.
 - **M-VERIFY** provides independent second-opinion verification. Used in
   Tier C dual-vendor consensus (see Section 4).
 - **M-KERNEL** is the highest-privilege slot. Invoked only for tasks that
@@ -161,6 +161,19 @@ it flags the task. M-ORCH splits the task:
 - Front-end rendering → stays with M-FRONT.
 - Integration logic → dispatched to M-FAST or M-HEAVY per normal rules.
 
+### 3.6  M-FAST worker fan-out (Kilo pool)
+
+For any task tagged with default Tier A routing (`test`, `mock`, `reading`,
+`assessment`, `logging`, `heartbeat`, `syntax-audit`, `path-audit`,
+`wiring`):
+
+1. M-ORCH dispatches the task to **3 parallel M-FAST workers**
+   (`worker_id`: 1..3).
+2. M-ORCH aggregates outputs and computes agreement score.
+3. If agreement is below 2/3, task escalates to M-HEAVY.
+4. If agreement is 2/3 or better, M-ORCH accepts output under normal NAP
+   limits.
+
 ---
 
 ## 4  Tier Summary (ADR-0003 alignment)
@@ -176,10 +189,10 @@ it flags the task. M-ORCH splits the task:
 
 ## 5  Orchestrator Responsibilities (M-ORCH)
 
-The orchestrator (Claude opus-class) is the **only** model that:
+The orchestrator (Kilo control-plane class) is the **only** model that:
 
 1. **Routes tasks** to the correct slot based on tags and escalation rules.
-2. **Consolidates reports** from sub-agents (Gemini research sweeps,
+2. **Consolidates reports** from sub-agents (Kilo worker sweeps,
    NVIDIA verification passes).
 3. **Verifies authenticity** of cited sources against
    `governance/source_verification.md`.
@@ -205,7 +218,7 @@ The orchestrator **does not**:
 |-----------|---------------|
 | Fast-model-first | M-FAST handles ≥80% of tasks by volume |
 | Escalation-only heavy models | M-HEAVY invoked only on trigger, never as default |
-| Batch research sweeps | Gemini 2.5 Flash sub-agents handle large-scale parallel research; results consolidated by M-ORCH |
+| Batch research sweeps | Kilo M-FAST worker pool handles large-scale parallel research; results consolidated by M-ORCH |
 | Token budget per task | Orchestrator tracks cumulative token spend; warns at 80% of session budget |
 | No redundant verification | Tier C dual-vendor is used only for Class 3+ safety-critical decisions, not routine work |
 
@@ -273,3 +286,4 @@ roster table binds them to concrete models.
 |------|--------|--------|
 | 2026-02-27 | Initial version — Kai-zen-OS planning baseline | RobinGase / Claude orchestrator session |
 | 2026-02-27 | v2: Fixed phantom models (Codex 5.3 → GPT-4o, Gemini 3.1 Pro → Gemini 2.5 Pro), added M-KERNEL tier (Opus 4.6 / GPT-4o) for kernel-critical patches, added Tier K routing, added pricing/status to roster | RobinGase / Claude orchestrator session |
+| 2026-02-27 | v3: Switched Gemini slots to Kilo runtime (M-FAST, M-FRONT, M-ORCH), added 3-worker M-FAST fan-out, designated Kilo control plane as gate/config owner, updated M-KERNEL primary to Kilo core agent with GPT-4o fallback | RobinGase / Codex session |

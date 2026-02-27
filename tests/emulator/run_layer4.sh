@@ -3,7 +3,7 @@
 # Validates that the emulator and ADB handle failure conditions gracefully
 # Tests: network disruption, invalid commands, process recovery
 
-set -uo pipefail
+set -euo pipefail
 
 if [ -d "/c/Users/Robin/scoop/apps/android-clt/current" ]; then
     SDK="/c/Users/Robin/scoop/apps/android-clt/current"
@@ -19,16 +19,45 @@ FAIL=0
 TOTAL=0
 
 run_test() {
-    local id="$1"; local desc="$2"; local cmd="$3"; local expected="$4"
+    local id="$1"; local desc="$2"; local cmd="$3"; local expected="$4"; local exit_mode="${5:-zero}"
+    local result exit_code pattern_ok=0 exit_ok=0
+
     TOTAL=$((TOTAL + 1))
-    result=$(eval "$cmd" 2>&1 || echo "COMMAND_FAILED")
-    if echo "$result" | grep -qi "$expected"; then
+
+    set +e
+    result=$(eval "$cmd" 2>&1)
+    exit_code=$?
+    set -e
+
+    if echo "$result" | grep -qiE "$expected"; then
+        pattern_ok=1
+    fi
+
+    case "$exit_mode" in
+        zero)
+            if [ "$exit_code" -eq 0 ]; then exit_ok=1; fi
+            ;;
+        nonzero)
+            if [ "$exit_code" -ne 0 ]; then exit_ok=1; fi
+            ;;
+        any)
+            exit_ok=1
+            ;;
+        *)
+            echo "FATAL: Unknown exit mode: $exit_mode"
+            exit 1
+            ;;
+    esac
+
+    if [ "$pattern_ok" -eq 1 ] && [ "$exit_ok" -eq 1 ]; then
         echo "  PASS  $id: $desc"
         PASS=$((PASS + 1))
     else
         echo "  FAIL  $id: $desc"
-        echo "        Expected: $expected"
-        echo "        Got:      $(echo "$result" | head -3)"
+        echo "        Expected pattern: $expected"
+        echo "        Expected exit:    $exit_mode"
+        echo "        Actual exit:      $exit_code"
+        echo "        Got:              $(echo "$result" | head -3)"
         FAIL=$((FAIL + 1))
     fi
 }
@@ -42,8 +71,9 @@ echo ""
 # T-030: Invalid ADB command handled gracefully
 echo "--- T-030: Invalid command handling ---"
 run_test "T-030" "Invalid shell command returns error" \
-    "$ADB $DEVICE shell /nonexistent/binary 2>&1 || echo error_caught" \
-    "error_caught"
+    "$ADB $DEVICE shell /nonexistent/binary" \
+    "not found|No such file|inaccessible" \
+    "nonzero"
 
 run_test "T-030b" "ADB still responsive after bad command" \
     "$ADB $DEVICE shell echo still_alive" \
@@ -53,8 +83,9 @@ run_test "T-030b" "ADB still responsive after bad command" \
 echo ""
 echo "--- T-031: Permission enforcement ---"
 run_test "T-031" "Write to /system rejected" \
-    "$ADB $DEVICE shell 'echo test > /system/test.txt 2>&1' || echo perm_denied" \
-    "denied\|Read-only\|perm_denied"
+    "$ADB $DEVICE shell 'echo test > /system/test.txt'" \
+    "denied|Read-only|Permission" \
+    "nonzero"
 
 run_test "T-031b" "Write to /data/local/tmp still works after rejection" \
     "$ADB $DEVICE shell 'echo ok > /data/local/tmp/resilience_test.txt && cat /data/local/tmp/resilience_test.txt && rm /data/local/tmp/resilience_test.txt'" \
@@ -64,8 +95,9 @@ run_test "T-031b" "Write to /data/local/tmp still works after rejection" \
 echo ""
 echo "--- T-032: Invalid package handling ---"
 run_test "T-032" "Install non-existent APK fails" \
-    "$ADB $DEVICE install /nonexistent.apk 2>&1 || echo install_failed" \
-    "install_failed\|COMMAND_FAILED\|error\|Failure"
+    "$ADB $DEVICE install /nonexistent.apk" \
+    "Failure|No such file|cannot stat|INSTALL_FAILED" \
+    "nonzero"
 
 run_test "T-032b" "Package manager still works after failed install" \
     "$ADB $DEVICE shell pm list packages | head -1" \
@@ -99,7 +131,7 @@ run_test "T-034" "10 rapid sequential commands" \
 echo ""
 echo "--- T-035: Large output handling ---"
 run_test "T-035" "Logcat 1000 lines doesn't hang" \
-    "timeout 10 $ADB $DEVICE logcat -d -t 1000 | wc -l | xargs -I{} test {} -gt 50 && echo logcat_large_ok || echo logcat_large_ok" \
+    "timeout 10 $ADB $DEVICE logcat -d -t 1000 | wc -l | xargs -I{} test {} -gt 50 && echo logcat_large_ok" \
     "logcat_large_ok"
 
 echo ""
