@@ -30,6 +30,7 @@ No production flashing code is included in this phase.
 ## Operations
 
 - `Docs/operations/s10plus_current_setup.md`
+- `Docs/operations/s10plus_rollback_plan.md` - rollback/recovery procedures (documentation only)
 - `Docs/operations/remote_control_setup.md`
 - `Docs/operations/emulator_first_validation.md`
 
