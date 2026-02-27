@@ -1,6 +1,6 @@
 # Repo Blueprint (Planning Codebase Style)
 
-> **Last updated**: 2026-02-27 (session 2)
+> **Last updated**: 2026-02-27 (session 3)
 
 ## Purpose
 
@@ -38,7 +38,7 @@ Kai-zen-OS/
       s10plus_current_setup.md       # S10+ observed state (sanitized)
       s10plus_rollback_plan.md       # Rollback/recovery procedures (doc only)
       remote_control_setup.md        # ADB/scrcpy/Appium control model
-      emulator_first_validation.md   # AVD test taxonomy (45 tests, 5 layers)
+      emulator_first_validation.md   # AVD test taxonomy (64 tests, 5 layers)
     governance/
       risk_register.md               # 15 risks with full detail and status
       source_verification.md         # Dated source log with confidence tiers

@@ -1,6 +1,6 @@
 # Subagent Research Digest
 
-> **Last updated**: 2026-02-27 (session 2)
+> **Last updated**: 2026-02-27 (session 3)
 
 ## Methodology
 
@@ -70,7 +70,7 @@ the following approach:
   - Research stubs too thin (expanded to 60-200+ lines each)
   - Risk register underweight (expanded 9 → 15 risks)
   - Samsung matrix missing Exynos/Snapdragon distinction (fixed)
-  - Rollback plan artifact missing (still needed)
+  - Rollback plan artifact now present (`Docs/operations/s10plus_rollback_plan.md`)
 
 ---
 

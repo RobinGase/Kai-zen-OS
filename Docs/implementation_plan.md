@@ -1,7 +1,7 @@
 # Kai-zen-OS End-to-End Implementation Plan (Planning Phase)
 
-> **Current phase**: Phase 3 (Emulator-First Test Design) — ACTIVE
-> **Last updated**: 2026-02-27 (session 2)
+> **Current phase**: Phase 3 (Emulator-First Test Design) — COMPLETE
+> **Last updated**: 2026-02-27 (session 3)
 > **Owner**: RobinGase
 > **NAP envelope**: Class 3 floor | A2 ceiling | highest-safety-wins
 
@@ -132,7 +132,7 @@ These findings constrain every downstream decision.
 
 ### WS-D: Remote Control + Test Harness
 
-**Status**: Partial — Layer 1 tests pass, Layers 2-5 pending
+**Status**: Complete — all 5 emulator layers passing
 
 - Deliverables:
   - `Docs/operations/remote_control_setup.md`
@@ -140,21 +140,22 @@ These findings constrain every downstream decision.
 - Output:
   - Emulator test suite bound to `boomies_api35` AVD
   - Clear "can prove in emulator" vs "cannot prove" split
-  - 45-test taxonomy across 5 layers
+  - 64-test harness across 5 layers with consolidated runner
 
 **Completed**:
 
 1. [x] Validate emulator boot and ADB connectivity (Layer 1: 7/7 PASS)
-2. [x] Define test taxonomy (45 tests across 5 layers in emulator_first_validation.md)
-3. [x] Document emulator limitations vs hardware-only behaviors
+2. [x] Run Layer 2 logic/governance tests (22/22 PASS)
+3. [x] Run Layer 3 UI/automation tests (10/10 PASS)
+4. [x] Run Layer 4 fault/resilience tests (11/11 PASS)
+5. [x] Run Layer 5 evidence/audit tests (14/14 PASS)
+6. [x] Add `tests/emulator/run_all.sh` convenience runner
+7. [x] Document emulator limitations vs hardware-only behaviors
+8. [x] Fix observed failures (API 35 airplane mode + MSYS path conversion)
 
 **Remaining work**:
 
-1. Install scrcpy and test emulator screen mirroring (Layer 3: T-020)
-2. Run Layer 2 logic tests (routing, escalation, safety guards)
-3. Run Layer 3 UI/automation tests (Appium, Maestro)
-4. Run Layer 4 fault/resilience tests
-5. Run Layer 5 evidence/audit tests
+1. Optional hardening: add Appium/Maestro server-backed tests in a dedicated extension layer
 
 ### WS-E: Autonomous Orchestration (MOSTLY COMPLETE)
 
@@ -186,7 +187,7 @@ These findings constrain every downstream decision.
 
 ### WS-F: Governance and Safety (MOSTLY COMPLETE)
 
-**Status**: Core artifacts done; rollback plan still needed
+**Status**: Mostly complete — rollback plan created, ongoing review pending
 
 - Deliverables:
   - `Docs/governance/risk_register.md` — DONE (15 risks, full detail)
@@ -204,26 +205,27 @@ These findings constrain every downstream decision.
 
 **Remaining work**:
 
-1. Create rollback plan artifact (`Docs/operations/s10plus_rollback_plan.md`)
+1. Review and refresh `Docs/operations/s10plus_rollback_plan.md` during Phase 4 runbook drafting
 
 ### WS-G: Nex Alignment Integration (MOSTLY COMPLETE)
 
-**Status**: Core artifacts done; decision router needs worked example
+**Status**: Mostly complete — core mapping and router artifacts are in place
 
 - Deliverables:
   - `Docs/alignment/kai_zen_nap_alignment.md` — DONE
-  - `Docs/alignment/kai_zen_decision_router.md` — needs worked example
+  - `Docs/alignment/kai_zen_decision_router.md` — DONE (worked example + decision log)
   - `Docs/alignment/nap_glossary.md` — DONE (Class 0-4, A0-A4, bundles)
 - Output: profile-composed governance envelope and decision routing
 
 **Completed**:
 
 1. [x] NAP glossary with Class 0-4, A0-A4, bundles, highest-safety-wins
+2. [x] Add worked example to decision router
+3. [x] Add decision log template
 
 **Remaining work**:
 
-1. Add worked example to decision router
-2. Add decision log template
+1. Keep decision log updated as new ADR-level choices are made
 
 ---
 
@@ -264,9 +266,9 @@ Label every claim by confidence tier and source quality.
 - [x] Add M-KERNEL tier to orchestrator spec
 - [x] Source verification log: access dates, source-to-claim mapping
 - [x] Reconcile cross-references between research docs and ADRs
-- [ ] Subagent report digest: expand with methodology, confidence ratings
+- [x] Subagent report digest: expand with methodology, confidence ratings
 - [ ] Update model_provider_investigation.md to match v2 orchestrator roster
-- [ ] Update repo_blueprint.md to match current file tree
+- [x] Update repo_blueprint.md to match current file tree
 
 **Exit criteria** (progress):
 
@@ -303,34 +305,28 @@ See `Docs/architecture/architecture_candidates.md` and
 - [x] One architecture selected (A) with quantified tradeoffs
 - [x] Losing candidates documented with reasons
 
-### Phase 3 — Emulator-First Test Design
+### Phase 3 — Emulator-First Test Design (COMPLETE)
 
 **Objective**: Build and run a test suite on the `boomies_api35` AVD
 that validates everything that can be validated without hardware.
 
 **Tasks**:
 
-- [ ] Boot `boomies_api35` AVD and confirm ADB connectivity
-- [ ] Test basic ADB commands: shell, push, pull, install, logcat
-- [ ] Install and test scrcpy with emulator
-- [ ] Define test taxonomy:
-  - Auth flow simulation (OAuth mock endpoints)
-  - Provider routing logic (mock LLM responses, test tier escalation)
-  - ADB command sequences (non-destructive)
-  - Filesystem layout validation
-  - Service health checks
-- [ ] Write test scripts (shell + Python) in `tests/emulator/`
-- [ ] Define "can prove in emulator" boundary:
+- [x] Boot `boomies_api35` AVD and confirm ADB connectivity
+- [x] Test basic ADB commands: shell, push, pull, install, logcat
+- [x] Install and test scrcpy with emulator
+- [x] Define test taxonomy and implement layered harness in `tests/emulator/`
+- [x] Define "can prove in emulator" boundary:
   - YES: ADB communication, app install/uninstall, filesystem ops, network calls, logcat parsing
   - NO: actual flash behavior, bootloader interaction, Knox counter, cellular baseband, hardware sensors
-- [ ] Run full test suite and document results
-- [ ] Fix any failures
+- [x] Run full test suite and document results
+- [x] Fix failures discovered during execution
 
-**Exit criteria**:
+**Exit criteria**: ALL MET
 
-- All emulator-valid tests pass on `boomies_api35`
-- Test results documented with timestamps
-- Clear boundary document between emulator-proven and hardware-only claims
+- [x] All emulator-valid tests pass on `boomies_api35` (64/64 PASS)
+- [x] Test results documented with timestamps
+- [x] Clear boundary document between emulator-proven and hardware-only claims
 
 ### Phase 4 — Hardware Pilot Readiness (S10+ only)
 
@@ -435,12 +431,13 @@ per-variant safety assessments.
 6. ~~Expand Samsung device matrix~~ DONE
 7. ~~Flesh out thin research docs~~ DONE
 8. ~~Expand risk register~~ DONE (15 risks)
+9. ~~Run and stabilize full emulator test harness (Layers 1-5)~~ DONE (64/64 PASS)
 
 ### Current priorities:
 
-1. Finish Phase 1 stragglers (model_provider_investigation, subagent digest, blueprint)
-2. Create S10+ rollback plan artifact
-3. Add worked example to decision router
-4. **Phase 2**: Define and evaluate 3 candidate architectures (A/B/C)
-5. **Phase 2**: Write ADR-0004 architecture selection
-6. **Phase 3**: Run Layer 2-5 emulator tests
+1. **Phase 4**: Write exact Heimdall/Odin command sequences (documentation-only, no execution)
+2. **Phase 4**: Finalize pre-flash + post-flash checklists for supervised S10+ pilot planning
+3. **Phase 4**: Peer review rollback and recovery paths against risk register
+4. WS-C: Complete `s10plus_current_setup.md` with ZeroClaw architecture and full device state fields
+5. WS-E: Reconcile `model_provider_investigation.md` with orchestrator spec v2 roster
+6. Governance: record human review sign-off + NAP governance score for Phase 3 evidence
