@@ -18,3 +18,12 @@ credentials/
 out/
 dist/
 tmp/
+
+# Kernel-patch routing config (Kai-zen-OS repo only, not synced upstream)
+# These lines define M-KERNEL tier routing that is specific to this
+# project's Samsung kernel work and should not propagate to the
+# general Nex_Alignment orchestrator template.
+kernel_routing.yaml
+kernel_routing.json
+.kernel-patches/
+Docs/architecture/kernel_patch_log.md

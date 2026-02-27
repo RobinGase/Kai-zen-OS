@@ -15,6 +15,7 @@ No production flashing code is included in this phase.
 - `Docs/alignment/README.md`
 - `Docs/alignment/kai_zen_nap_alignment.md`
 - `Docs/alignment/kai_zen_decision_router.md`
+- `Docs/alignment/nap_glossary.md` - defines Class 0-4, A0-A4, bundles, highest-safety-wins
 
 ## Research
 
